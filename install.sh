@@ -124,4 +124,8 @@ cd code
 THEANO_FLAGS="device=cpu" python logistic_sgd.py  
 python logistic_sgd.py  
 
+### Finished
+echo -e "\e[41m\e[97mInstalation finished!"
+echo -e "\e[0m"
+
 
