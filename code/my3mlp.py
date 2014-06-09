@@ -369,4 +369,5 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 
 
 if __name__ == '__main__':
-    test_mlp(n_epochs = 100, n_hidden1 = 1000, n_hidden2=400, n_hidden3=200, L2_reg=0.0001)
+    test_mlp(learning_rate = 0.02, n_epochs = 100, n_hidden1 = 420, n_hidden2=140, n_hidden3=50, L2_reg=0.000001)
+    #test_mlp(n_epochs = 100, n_hidden1 = 1000, n_hidden2=400, n_hidden3=200, L2_reg=0.0001)
