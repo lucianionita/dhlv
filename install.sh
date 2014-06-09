@@ -110,7 +110,7 @@ cd
 mkdir data
 wget -c -r -np http://deeplearning.net/tutorial/code/
 mv deeplearning.net/tutorial/code .
-rm -fr deeplearning.net/tutorial/code .
+rm -fr deeplearning.net
 rm code/*htm*
 rm code/*/*htm*
 
