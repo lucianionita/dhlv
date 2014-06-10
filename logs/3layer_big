@@ -1,0 +1,49 @@
+Command: ['my3mlp.py', '-L2_reg=0.000001', '-learning_rate=0.5']
+... loading data
+... building the model
+... training
+epoch 1, minibatch 2500/2500, validation error 4.560000 %
+     epoch 1, minibatch 2500/2500, test error of best model 5.130000 %
+epoch 2, minibatch 2500/2500, validation error 4.350000 %
+     epoch 2, minibatch 2500/2500, test error of best model 5.090000 %
+epoch 3, minibatch 2500/2500, validation error 3.190000 %
+     epoch 3, minibatch 2500/2500, test error of best model 3.250000 %
+epoch 4, minibatch 2500/2500, validation error 2.890000 %
+     epoch 4, minibatch 2500/2500, test error of best model 3.070000 %
+epoch 5, minibatch 2500/2500, validation error 2.520000 %
+     epoch 5, minibatch 2500/2500, test error of best model 2.580000 %
+epoch 6, minibatch 2500/2500, validation error 2.350000 %
+     epoch 6, minibatch 2500/2500, test error of best model 2.590000 %
+epoch 7, minibatch 2500/2500, validation error 2.650000 %
+epoch 8, minibatch 2500/2500, validation error 2.850000 %
+epoch 9, minibatch 2500/2500, validation error 2.400000 %
+epoch 10, minibatch 2500/2500, validation error 2.100000 %
+     epoch 10, minibatch 2500/2500, test error of best model 2.370000 %
+epoch 11, minibatch 2500/2500, validation error 2.110000 %
+epoch 12, minibatch 2500/2500, validation error 2.270000 %
+epoch 13, minibatch 2500/2500, validation error 2.060000 %
+     epoch 13, minibatch 2500/2500, test error of best model 2.500000 %
+epoch 14, minibatch 2500/2500, validation error 2.650000 %
+epoch 15, minibatch 2500/2500, validation error 2.500000 %
+epoch 16, minibatch 2500/2500, validation error 2.020000 %
+     epoch 16, minibatch 2500/2500, test error of best model 2.110000 %
+epoch 17, minibatch 2500/2500, validation error 1.970000 %
+     epoch 17, minibatch 2500/2500, test error of best model 2.260000 %
+epoch 18, minibatch 2500/2500, validation error 2.180000 %
+epoch 19, minibatch 2500/2500, validation error 2.240000 %
+epoch 20, minibatch 2500/2500, validation error 2.240000 %
+epoch 21, minibatch 2500/2500, validation error 2.150000 %
+epoch 22, minibatch 2500/2500, validation error 2.090000 %
+epoch 23, minibatch 2500/2500, validation error 2.070000 %
+epoch 24, minibatch 2500/2500, validation error 2.240000 %
+epoch 25, minibatch 2500/2500, validation error 2.240000 %
+epoch 26, minibatch 2500/2500, validation error 2.840000 %
+epoch 27, minibatch 2500/2500, validation error 2.030000 %
+epoch 28, minibatch 2500/2500, validation error 2.200000 %
+epoch 29, minibatch 2500/2500, validation error 2.150000 %
+epoch 30, minibatch 2500/2500, validation error 2.520000 %
+epoch 31, minibatch 2500/2500, validation error 2.130000 %
+epoch 32, minibatch 2500/2500, validation error 2.520000 %
+epoch 33, minibatch 2500/2500, validation error 2.400000 %
+Optimization complete. Best validation score of 1.970000 % obtained at iteration 42500, with test performance 2.260000 %
+The code for file my3mlp.py ran for 12.14m

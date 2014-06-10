@@ -1,0 +1,8 @@
+python my3mlp.py -n_hidden1=500 -n_hidden2=200 -n_hidden3=50 -learning_rate=0.2 -L2_reg=0.000003
+	Gets %1.43 on epoch 84. Then around 130 it starts overfitting.
+
+python my3mlp.py  -L2_reg=0.000001   -learning_rate=0.2
+	Gets %1.35 on epoch 117. Then shortly after it starts slightly overfitting
+
+python my3mlp.py -n_hidden1=500 -n_hidden2=200 -n_hidden3=50 -learning_rate=0.05python my3mlp2.py -learning_rate=0.01 (constant LR)
+	reach about 1.75

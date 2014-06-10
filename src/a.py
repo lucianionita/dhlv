@@ -115,7 +115,7 @@ class MLP(object):
     class).
     """
 
-    def __init__(self, rng, input, n_in, n_hidden, n_out):
+    def __init__(self, rng, input, n_in, n_hidden1, n_hidden2, n_hidden3, n_out):
         """Initialize the parameters for the multilayer perceptron
 
         :type rng: numpy.random.RandomState
@@ -142,25 +142,37 @@ class MLP(object):
         # into a HiddenLayer with a tanh activation function connected to the
         # LogisticRegression layer; the activation function can be replaced by
         # sigmoid or any other nonlinear function
-        self.hiddenLayer = HiddenLayer(rng=rng, input=input,
-                                       n_in=n_in, n_out=n_hidden,
-                                       activation=T.tanh)
+        self.hiddenLayer1 = HiddenLayer(rng=rng, input=input,
+                                       n_in=n_in, n_out=n_hidden1,
+                                       activation=rectifier)
+        self.hiddenLayer2 = HiddenLayer(rng=rng, 
+				       input=self.hiddenLayer1.output,
+                                       n_in=n_hidden1, n_out=n_hidden2,
+                                       activation=rectifier)
+        self.hiddenLayer3 = HiddenLayer(rng=rng, 
+				       input=self.hiddenLayer2.output,
+                                       n_in=n_hidden2, n_out=n_hidden3,
+                                       activation=rectifier)
 
         # The logistic regression layer gets as input the hidden units
         # of the hidden layer
         self.logRegressionLayer = LogisticRegression(
-            input=self.hiddenLayer.output,
-            n_in=n_hidden,
+            input=self.hiddenLayer3.output,
+            n_in=n_hidden3,
             n_out=n_out)
 
         # L1 norm ; one regularization option is to enforce L1 norm to
         # be small
-        self.L1 = abs(self.hiddenLayer.W).sum() \
-                + abs(self.logRegressionLayer.W).sum()
+        self.L1 = abs(self.hiddenLayer1.W).sum() \
+                + abs(self.hiddenLayer2.W).sum() \
+                + abs(self.hiddenLayer3.W).sum() \
+                + abs(self.logRegressionLayer.W).sum() 
 
         # square of L2 norm ; one regularization option is to enforce
         # square of L2 norm to be small
-        self.L2_sqr = (self.hiddenLayer.W ** 2).sum() \
+        self.L2_sqr = (self.hiddenLayer1.W ** 2).sum() \
+                    + (self.hiddenLayer2.W ** 2).sum() \
+                    + (self.hiddenLayer3.W ** 2).sum() \
                     + (self.logRegressionLayer.W ** 2).sum()
 
         # negative log likelihood of the MLP is given by the negative
@@ -172,11 +184,11 @@ class MLP(object):
 
         # the parameters of the model are the parameters of the two layer it is
         # made out of
-        self.params = self.hiddenLayer.params + self.logRegressionLayer.params
+        self.params = self.hiddenLayer1.params + self.hiddenLayer2.params+ self.logRegressionLayer.params
 
 
 def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
-             dataset='mnist.pkl.gz', batch_size=20, n_hidden=500):
+             dataset='mnist.pkl.gz', batch_size=20, n_hidden1=500,n_hidden2=100, n_hidden3=50):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -230,7 +242,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 
     # construct the MLP class
     classifier = MLP(rng=rng, input=x, n_in=28 * 28,
-                     n_hidden=n_hidden, n_out=10)
+                     n_hidden1=n_hidden1, n_hidden2=n_hidden2, n_hidden3=n_hidden3, n_out=10)
 
     # the cost we minimize during training is the negative log likelihood of
     # the model plus the regularization terms (L1 and L2); cost is expressed
@@ -351,17 +363,11 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     print(('Optimization complete. Best validation score of %f %% '
            'obtained at iteration %i, with test performance %f %%') %
           (best_validation_loss * 100., best_iter + 1, test_score * 100.))
-    print >> sys.stderr, ('The code for file ' +
+    print ('The code for file ' +
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
 
 
 if __name__ == '__main__':
-	learning_rate=0.01
-	L1_reg=0.00
-	L2_reg=0.0001
-	n_epochs=1000
-	for arg in sys.argv[1:]:
-		exec(arg)
-	test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
-		dataset='mnist.pkl.gz', batch_size=20, n_hidden=500):
+    test_mlp(learning_rate = 0.02, n_epochs = 100, n_hidden1 = 420, n_hidden2=140, n_hidden3=50, L2_reg=0.000001)
+    #test_mlp(n_epochs = 100, n_hidden1 = 1000, n_hidden2=400, n_hidden3=200, L2_reg=0.0001)

@@ -1,0 +1,38 @@
+Command: ['my3mlp.py']
+... loading data
+... building the model
+... training
+epoch 1, minibatch 2500/2500, validation error 4.340000 %
+     epoch 1, minibatch 2500/2500, test error of best model 5.170000 %
+epoch 2, minibatch 2500/2500, validation error 3.330000 %
+     epoch 2, minibatch 2500/2500, test error of best model 3.710000 %
+epoch 3, minibatch 2500/2500, validation error 2.940000 %
+     epoch 3, minibatch 2500/2500, test error of best model 3.050000 %
+epoch 4, minibatch 2500/2500, validation error 2.780000 %
+     epoch 4, minibatch 2500/2500, test error of best model 2.810000 %
+epoch 5, minibatch 2500/2500, validation error 2.550000 %
+     epoch 5, minibatch 2500/2500, test error of best model 2.620000 %
+epoch 6, minibatch 2500/2500, validation error 2.350000 %
+     epoch 6, minibatch 2500/2500, test error of best model 2.550000 %
+epoch 7, minibatch 2500/2500, validation error 2.090000 %
+     epoch 7, minibatch 2500/2500, test error of best model 2.240000 %
+epoch 8, minibatch 2500/2500, validation error 1.950000 %
+     epoch 8, minibatch 2500/2500, test error of best model 2.060000 %
+epoch 9, minibatch 2500/2500, validation error 1.960000 %
+epoch 10, minibatch 2500/2500, validation error 1.960000 %
+epoch 11, minibatch 2500/2500, validation error 1.980000 %
+epoch 12, minibatch 2500/2500, validation error 1.940000 %
+     epoch 12, minibatch 2500/2500, test error of best model 1.890000 %
+epoch 13, minibatch 2500/2500, validation error 1.930000 %
+     epoch 13, minibatch 2500/2500, test error of best model 1.890000 %
+epoch 14, minibatch 2500/2500, validation error 1.930000 %
+epoch 15, minibatch 2500/2500, validation error 1.940000 %
+epoch 16, minibatch 2500/2500, validation error 1.920000 %
+     epoch 16, minibatch 2500/2500, test error of best model 1.820000 %
+epoch 17, minibatch 2500/2500, validation error 1.890000 %
+     epoch 17, minibatch 2500/2500, test error of best model 1.820000 %
+epoch 18, minibatch 2500/2500, validation error 1.890000 %
+epoch 19, minibatch 2500/2500, validation error 1.890000 %
+epoch 20, minibatch 2500/2500, validation error 1.880000 %
+     epoch 20, minibatch 2500/2500, test error of best model 1.810000 %
+epoch 21, minibatch 2500/2500, validation error 1.880000 %

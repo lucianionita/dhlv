@@ -20,7 +20,7 @@ echo -e "\e[0m"
 sudo pip install ipython nose
 sudo apt-get -y install htop
 sudo apt-get -y install libjpeg-dev libfreetype6-dev zlib1g-dev libpng12-dev 
-sudo pip install tiffany jpeg freetype-py Pillow
+sudo pip install tiffany freetype-py Pillow
 
 
 
