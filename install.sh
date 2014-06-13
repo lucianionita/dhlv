@@ -29,7 +29,7 @@ sudo pip install tiffany freetype-py Pillow
 ############## install cuda:
 echo -e "\e[41m\e[97mInstalling cuda"
 echo -e "\e[0m"
-
+cd 
 mkdir Downloads
 cd Downloads
 wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1204/x86_64/cuda-repo-ubuntu1204_5.5-0_amd64.deb
@@ -51,7 +51,7 @@ echo -e "\e[0m"
 cd ~/Downloads
 git clone git://github.com/xianyi/OpenBLAS
 cd OpenBLAS
-make FC=gfortran
+make -j 8 FC=gfortran
 sudo make PREFIX=/usr/local/ install
 
 cd /usr/local/lib
@@ -65,10 +65,10 @@ sudo ln -s liblapack.so.3gf /usr/lib/liblapack.so.3gf
 ## numpy scipy and numpy
 echo -e "\e[41m\e[97mInstalling numpy"
 echo -e "\e[0m"
-cd
-sudo pip install cython
 cd ~/Downloads
+sudo pip install cython
 git clone https://github.com/numpy/numpy
+cd ~/Downloads
 cd numpy
 python setup.py build
 sudo python setup.py install
