@@ -1,1 +1,0 @@
-THEANO_FLAGS=device=cpu python my3mlp.py ./logs/3layer_small
