@@ -1,0 +1,46 @@
+Default MLP w/ 500 hidden units
+epoch 1000, minibatch 2500/2500, validation error 1.700000 %
+Optimization complete. Best validation score of 1.690000 % obtained at iteration 2070000, with test performance 1.650000 %
+
+
+
+
+
+dim = 300
+epoch 275, minibatch 2500/2500, validation error 1.920000 %
+Optimization complete. Best validation score of 1.850000 % obtained at iteration 345000, with test performance 2.060000 %
+
+dim = 200
+epoch 825, minibatch 2500/2500, validation error 1.840000 %
+     epoch 825, minibatch 2500/2500, test error of best model 1.700000 %
+...
+epoch 830, minibatch 2500/2500, validation error 1.840000 %
+Write failed: Broken pipe
+
+
+dim = 100
+epoch 712, minibatch 2500/2500, validation error 1.630000 %
+     epoch 712, minibatch 2500/2500, test error of best model 1.710000 %
+...
+epoch 743, minibatch 2500/2500, validation error 1.630000 %
+Write failed: Broken pipe
+
+
+
+dim = 50
+epoch 510, minibatch 2500/2500, validation error 1.660000 %
+     epoch 510, minibatch 2500/2500, test error of best model 1.830000 %
+...
+epoch 818, minibatch 2500/2500, validation error 1.680000 %
+Write failed: Broken pipe
+
+
+
+dim = 25
+epoch 433, minibatch 2500/2500, validation error 1.840000 %
+     epoch 433, minibatch 2500/2500, test error of best model 1.990000 %
+...
+epoch 496, minibatch 2500/2500, validation error 1.880000 %
+Write failed: Broken pipe
+
+

@@ -104,9 +104,9 @@ class LeNetConvPoolLayer(object):
         self.params = [self.W, self.b]
 
 
-def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
+def evaluate_lenet5(learning_rate=0.1, n_epochs=500,
                     dataset='mnist.pkl.gz',
-                    nkerns=[20, 50, 150], batch_size=500):
+                    nkerns=[64, 128, 256], batch_size=500):
     """ Demonstrates lenet on MNIST dataset
 
     :type learning_rate: float
@@ -162,16 +162,16 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
     # 4D output tensor is thus of shape (batch_size,nkerns[0],13,13)
     layer0 = LeNetConvPoolLayer(rng, input=layer0_input,
             image_shape=(batch_size, 1, 28, 28),
-            filter_shape=(nkerns[0], 1, 3, 3), poolsize=(2, 2))
+            filter_shape=(nkerns[0], 1, 5, 5), poolsize=(2, 2))
 
     layer1 = LeNetConvPoolLayer(rng, input=layer0.output,
-            image_shape=(batch_size, nkerns[0], 13, 13),
+            image_shape=(batch_size, nkerns[0], 12, 12),
             filter_shape=(nkerns[1], nkerns[0], 3, 3), poolsize=(2, 2))
     
 
     layer1b = LeNetConvPoolLayer(rng, input=layer1.output,
-            image_shape=(batch_size, nkerns[1], 12, 12),
-            filter_shape=(nkerns[2], nkerns[1], 5, 5), poolsize=(2, 2))
+            image_shape=(batch_size, nkerns[1], 5, 5),
+            filter_shape=(nkerns[2], nkerns[1], 2, 2), poolsize=(1, 1))
 
     # the HiddenLayer being fully-connected, it operates on 2D matrices of
     # shape (batch_size,num_pixels) (i.e matrix of rasterized images).

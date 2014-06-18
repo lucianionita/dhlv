@@ -53,6 +53,7 @@ git clone git://github.com/xianyi/OpenBLAS
 cd OpenBLAS
 make -j 8 FC=gfortran
 sudo make PREFIX=/usr/local/ install
+sudo make PREFIX=/usr/ install
 
 cd /usr/local/lib
 sudo ln -s libopenblas.so /usr/lib/libblas.so

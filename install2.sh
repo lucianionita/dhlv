@@ -1,3 +1,74 @@
+set -e 
+#install script
+
+#Step 0. Create an AWS GPU instance with an Ubuntu 12.04 AMI
+
+#Step 1.
+
+
+echo -e "\e[41m\e[97mGetting system up to date and installing requred packages"
+echo -e "\e[0m"
+sudo apt-get -y update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
+sudo apt-get -y install git make python-dev python-setuptools gfortran g++ python-pip screen libblas-dev liblapack-dev
+#(python-numpy python-scipy)
+
+# misc stuff to add
+echo -e "\e[41m\e[97mInstalling misc stuff"
+echo -e "\e[0m"
+sudo pip install ipython nose
+sudo apt-get -y install htop
+sudo apt-get -y install libjpeg-dev libfreetype6-dev zlib1g-dev libpng12-dev 
+sudo pip install tiffany freetype-py Pillow
+
+
+
+
+
+############## install cuda:
+echo -e "\e[41m\e[97mInstalling cuda"
+echo -e "\e[0m"
+cd 
+mkdir Downloads
+cd Downloads
+wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1204/x86_64/cuda-repo-ubuntu1204_5.5-0_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1204_5.5-0_amd64.deb
+sudo apt-get -y update
+sudo apt-get -y install cuda
+
+echo "export PATH=$PATH:/usr/local/cuda-6.0/bin/" >> ~/.bashrc 
+echo export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib/:/usr/local/cuda-6.0/targets/x86_64-linux/lib/ >> ~/.bashrc 
+source ~/.bashrc
+
+
+#############misc
+
+
+################### blas
+echo -e "\e[41m\e[97mInstalling blas"
+echo -e "\e[0m"
+cd ~/Downloads
+git clone git://github.com/xianyi/OpenBLAS
+cd OpenBLAS
+make -j 8 FC=gfortran
+sudo make PREFIX=/usr/local/ install
+sudo make PREFIX=/usr/ install
+
+cd /usr/local/lib
+sudo unlink /usr/lib/libblas.so
+sudo unlink /usr/lib/libblas.so.3gf
+sudo ln -s libopenblas.so /usr/lib/libblas.so
+sudo ln -s libopenblas.so.0 /usr/lib/libblas.so.3gf
+#sudo ln -s libopenblas.so /usr/lib/libopenblas.so.0
+#sudo ln -s libopenblas.so libopenblas.so.0
+cd /usr/lib/lapack
+# !!! REMOVE THIS COMMENT
+#sudo unlink /usr/lib/liblapack.so.3gf
+sudo ln -s liblapack.so.3gf /usr/lib/liblapack.so.3gf
+
+
+
 ## numpy scipy and numpy
 echo -e "\e[41m\e[97mInstalling numpy"
 echo -e "\e[0m"
@@ -12,7 +83,16 @@ sudo python setup.py install
 echo -e "\e[41m\e[97mInstalling scipy"
 echo -e "\e[0m"
 cd
-sudo pip install scimath
+# for some reason this doesn't work anymore:
+# sudo pip install scimath 
+# so we do this instead
+cd ~/Downloads
+git clone https://github.com/enthought/scimath
+cd scimath
+python setup.py build
+sudo python setup.py install
+
+# and we move on to installing scipy
 cd ~/Downloads
 git clone https://github.com/scipy/scipy
 cd scipy
@@ -36,7 +116,7 @@ source ~/.bashrc
 ## TEST IF YOU DARE
 echo -e "\e[41m\e[97mSimple test"
 echo -e "\e[0m"
-python -c “import numpy; import scipy; import theano”
+python -c "import numpy; import scipy; import theano"
 
 
 ### get the code
