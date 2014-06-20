@@ -354,18 +354,18 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     print >> sys.stderr, ('The code for file ' +
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
+    return classifier
 
 
-if __name__ == '__main__':
-	learning_rate=0.01
-	L1_reg=0.00
-	L2_reg=0.0001
-	n_epochs=1000
-	dataset='mnist.pkl.gz'
-	batch_size=20
-	n_hidden=500
-	for arg in sys.argv[1:]:
-		if arg[0]=='-':
-			exec(arg[1:])
-	test_mlp(learning_rate, L1_reg, L2_reg, n_epochs,
-		dataset, batch_size, n_hidden)
+learning_rate=0.01
+L1_reg=0.00
+L2_reg=0.0001
+n_epochs=1000
+dataset='mnist.pkl.gz'
+batch_size=20
+n_hidden=20
+for arg in sys.argv[1:]:
+	if arg[0]=='-':
+		exec(arg[1:])
+mlp=test_mlp(learning_rate, L1_reg, L2_reg, n_epochs,
+	dataset, batch_size, n_hidden)

@@ -1,7 +1,5 @@
 mkdir females males idk
 
-
-
 for i in `cat fnames`; do
 	mv -v lfwcrop_grey/faces/$i\_* ./females/
 done
