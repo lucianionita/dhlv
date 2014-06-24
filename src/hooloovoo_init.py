@@ -1,8 +1,8 @@
 import numpy as np
 import theano
 
-def init_standard(rng, shape, total_dim):
-        X_bound = np.sqrt(6. / total_dim)
+def init_standard(rng, shape):
+        X_bound = np.sqrt(6. / np.sum(shape))
         X = theano.shared(np.asarray(
             rng.uniform(low=-X_bound, high=X_bound, size=shape),
             dtype=theano.config.floatX),  borrow=True)

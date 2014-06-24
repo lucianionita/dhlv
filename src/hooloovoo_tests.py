@@ -13,7 +13,7 @@ import theano.tensor as T
 from theano.tensor.signal import downsample
 from theano.tensor.nnet import conv
 
-from hooloovoo_aux import load_data
+from hooloovoo_aux import mnist_data
 import hooloovoo_init as hlv_init
 import hooloovoo_layers as hlv_layers
 
