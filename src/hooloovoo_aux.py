@@ -53,12 +53,19 @@ def mnist_data(dataset):
 
 
 # Get the data
-def faces_data():
+def faces_data(resize_factor = None):
     print "Loading faces data ..."
     t0 = time.time()
-    faces, labels = q.load_from_pkl("/home/tc/faces.bzpkl")
+    faces, labels = q.load_from_pkl("/home/tc/dhlv/data/faces.bzpkl")
+    if resize_factor is not None:
+        new_size = (int(64*resize_factor), int(64*resize_factor))
+        print new_size
+        for i in range(len(faces)):
+            print i
+            t = cv2.resize(faces[i].reshape(64,64),new_size).ravel()
     labels = np.asarray(labels, dtype=np.float64)
     faces = np.asarray(faces, dtype=np.float64)
+    
     
     data = q.newObject()
     data.train = q.newObject()

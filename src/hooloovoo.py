@@ -52,14 +52,12 @@ def showBunch(X, r=1, size=64):
         print i
         q.show(Y/(np.max(Y))+0.5, r=r, t=-1)
 
-showBunch(param_values[2], 1, 64)   
 
 
-print "Loading data ..."
+
 t0 = time.time()
 data_faces = faces_data()
 t1 = time.time()
-print "Data loaded in %0.2f seconds" % ( t1-t0)
 
 
 """
@@ -103,18 +101,19 @@ lr = 0.1
 lr_exp = 0.5
 batch_size = 300
 #prob_drop = 0.333
-n_hidden = [30,20,10]
-M = hlv_models.MLPM_model(64*64, 2, data_faces, batch_size, None, n_hidden, 1,L2_reg=0.1)
+n_hidden = [200]
+M = hlv_models.MLPM_model(24*24, 2, data_faces, batch_size, None, n_hidden, 1,L2_reg=0.1)
 
 #M = hlv_models.MLP_model(64*64, 2, data_faces, batch_size, None, n_hidden, 1)
 param_values = hlv_aux.get_params(M)
 while lr > 0.0001:
     print "============ LR %f" % (lr)
-    M = hlv_models.MLPM_model(64*64, 2, data_faces, batch_size, None, n_hidden, lr, L2_reg=0.1)
+    M = hlv_models.MLPM_model(24*24, 2, data_faces, batch_size, None, n_hidden, lr, L2_reg=0.1)
     #M = hlv_models.MLP_model(64*64, 2, data_faces, batch_size, None, n_hidden, lr)
     hlv_aux.set_params(M, param_values)
-    param_values = hlv_train.train_minibatches(M, min_epochs=250, max_epochs=1000)
+    param_values = hlv_train.train_minibatches(M, min_epochs=150, max_epochs=1000)
     lr = lr * lr_exp
     
-    
+
+showBunch(param_values[2], 1, 24)   
     

@@ -23,7 +23,11 @@ Todo list:
     Add deformation for inputs    
     Add 1-2 other datasets
     Add input noise
-    
+    Validation based on minibatches
+    Simple YaML-like specification of structure
+    SVD-like Hidden Layer
+    DropConnect Hidden Layer
+    Preprocessing
     
     
     
