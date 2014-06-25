@@ -13,34 +13,35 @@ import theano.tensor as T
 from theano.tensor.signal import downsample
 from theano.tensor.nnet import conv
 import hooloovoo_init as hlv_init
-import numpy as np
+
 
 class ConvLayer(object):
     def __init__(self, rng, input, filter_shape, image_shape, activation=T.tanh):
+        print image_shape, filter_shape
         assert image_shape[1] == filter_shape[1]
         
         self.input = input
 
         # there are "num input feature maps * filter height * filter width"
         # inputs to each hidden unit
-        fan_in = numpy.prod(filter_shape[1:])
+        fan_in = np.prod(filter_shape[1:])
 
         # each unit in the lower layer receives a gradient from:
         # "num output feature maps * filter height * filter width" 
-        fan_out = filter_shape[0] * numpy.prod(filter_shape[2:])
+        fan_out = filter_shape[0] * np.prod(filter_shape[2:])
         
         # initialize weights with random weights
-        self.W = hlv_init.standard_init(rng, filter_shape, (fan_in + fan_out))
+        self.W = hlv_init.init_standard(rng, filter_shape)
 
         # the bias is a 1D tensor -- one bias per output feature map        
         self.b = hlv_init.init_zero((filter_shape[0],))
 
         # convolve input feature maps with filters
         conv_out = conv.conv2d(input=input, filters=self.W,
-                filter_shape=filter_shape, image_shape=image_shape)
+                filter_shape=filter_shape, image_shape=(None, 1, 64,64)) # !!! OPTIMIZATable
+
 
         self.output = activation(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
-        #self.output = T.tanh(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
 
         # store parameters of this layer
         self.params = [self.W, self.b]
@@ -70,7 +71,7 @@ class LogisticRegression_dropconnect(object):
 
         # initialize with 0 the weights W as a matrix of shape (n_in, n_out)
         self.W = hlv_init.init_zero((n_in,n_out))
-        #self.W = theano.shared( theano.shared(value=numpy.zeros((n_in, n_out),
+        #self.W = theano.shared( theano.shared(value=np.zeros((n_in, n_out),
         #                                         dtype=theano.config.floatX),
         #                        name='W', borrow=True)
         # initialize the baises b as a vector of n_out 0s
@@ -113,7 +114,7 @@ class LogisticRegression(object):
 
         # initialize with 0 the weights W as a matrix of shape (n_in, n_out)
         self.W = hlv_init.init_zero((n_in,n_out))
-        #self.W = theano.shared( theano.shared(value=numpy.zeros((n_in, n_out),
+        #self.W = theano.shared( theano.shared(value=np.zeros((n_in, n_out),
         #                                         dtype=theano.config.floatX),
         #                        name='W', borrow=True)
         # initialize the baises b as a vector of n_out 0s
