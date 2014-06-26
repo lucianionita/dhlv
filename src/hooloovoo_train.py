@@ -73,19 +73,22 @@ def train_minibatches(self,     min_epochs = 100,
             # Train
             batch_avg_cost = train_minibatch(self,batch_idx)
             iteration = epoch * self.n_train_batches + batch_idx
-            
             # validation if right time
             if (iteration + 1) % validation_frequency == 0:
+                
                 validation_loss = self.validate_model()
-                print('epoch %i, mbatch %i/%i, tcost %.5f, verror %f %%' % \
+                
+                print('epoch %i, mbatch %i/%i, tcost %.5f, verror %.3f%%' % \
                     (epoch, batch_idx + 1, self.n_train_batches,
                      batch_avg_cost, validation_loss * 100.))
                 if validation_loss < best_validation_loss * improvement_threshold:                                                
                     patience = max(patience, iteration * patience_increase)
                     best_validation_loss = validation_loss
+                    t0 = time.time()
                     test_score = self.test_model()
+                    t = time.time() - t0
                     print(('     epoch %i, minibatch %i/%i, test error of best'
-                        ' model %f %%') % (epoch, batch_idx + 1, 
+                        ' model %f%%') % (epoch, batch_idx + 1, 
                         self.n_train_batches, test_score * 100.))
                     best_params = hlv_aux.get_params(self)
         # check if done looping

@@ -16,8 +16,9 @@ from theano.tensor.nnet import conv
 # Auxiliary files
 
 # The theano tutorial load_data, used to load the MNIST data
-def mnist_data(dataset):
-    print "Loading faces data ..."
+def mnist_data(dataset='mnist.pkl.gz'):
+    t0 = time.time()
+    print "Loading digits data ..."
     dataset = "/home/tc/dhlv/data/"+dataset
     f = gzip.open(dataset, 'rb')
     train_set, valid_set, test_set = cPickle.load(f)

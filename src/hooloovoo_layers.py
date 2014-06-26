@@ -16,8 +16,7 @@ import hooloovoo_init as hlv_init
 
 
 class ConvLayer(object):
-    def __init__(self, rng, input, filter_shape, image_shape, activation=T.tanh):
-        print image_shape, filter_shape
+    def __init__(self, rng, input, filter_shape, image_shape, activation=T.tanh, poolsize=(2,2)):
         assert image_shape[1] == filter_shape[1]
         
         self.input = input
@@ -31,14 +30,14 @@ class ConvLayer(object):
         fan_out = filter_shape[0] * np.prod(filter_shape[2:])
         
         # initialize weights with random weights
-        self.W = hlv_init.init_standard(rng, filter_shape)
+        self.W = hlv_init.init_conv(rng, filter_shape, poolsize)
 
         # the bias is a 1D tensor -- one bias per output feature map        
         self.b = hlv_init.init_zero((filter_shape[0],))
 
         # convolve input feature maps with filters
         conv_out = conv.conv2d(input=input, filters=self.W,
-                filter_shape=filter_shape, image_shape=(None, 1, 64,64)) # !!! OPTIMIZATable
+                filter_shape=filter_shape, image_shape=image_shape) # !!! OPTIMIZATable
 
 
         self.output = activation(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
@@ -46,15 +45,61 @@ class ConvLayer(object):
         # store parameters of this layer
         self.params = [self.W, self.b]
 
+class ConvPoolLayer(object):
+    def __init__(self, rng, input, filter_shape, image_shape, activation=T.tanh, poolsize=(2,2)):
+        assert image_shape[1] == filter_shape[1]
+        self.input = input
+        fan_in = np.prod(filter_shape[1:])
+        fan_out = filter_shape[0] * np.prod(filter_shape[2:])
+        self.W = hlv_init.init_conv(rng, filter_shape, poolsize)
+        self.b = hlv_init.init_zero((filter_shape[0],))
 
+
+        conv_out = conv.conv2d(input=input, filters=self.W,
+                filter_shape=filter_shape, image_shape=image_shape)
+
+        # downsample each feature map individually, using maxpooling
+        pooled_out = downsample.max_pool_2d(input=conv_out,
+                                            ds=poolsize, ignore_border=True)
+
+        # add the bias term. Since the bias is a vector (1D array), we first
+        # reshape it to a tensor of shape (1,n_filters,1,1). Each bias will
+        # thus be broadcasted across mini-batches and feature map
+        # width & height
+        self.output = T.tanh(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+
+
+        # store parameters of this layer
+        self.params = [self.W, self.b]   
+
+class FlattenLayer(object):
+    def __init__(self, rng, input, data, n_in, n_out):
+        self.input = input
+
+        # downsample each feature map individually, using maxpooling
+        self.output = self.input.flatten(2)
+        
+        # store parameters of this layer
+        self.params = []
+
+class ReshapeLayer(object):
+    def __init__(self, rng, input, data, n_in, n_out):
+        self.input = input
+
+        # downsample each feature map individually, using maxpooling
+        self.output = self.input.reshape((-1, 1, 28, 28))
+        
+        # store parameters of this layer
+        self.params = []
+
+            
 class PoolingLayer(object):
     def __init__(self, rng, input, input_shape, poolsize=(2, 2)):
         self.input = input
 
         # downsample each feature map individually, using maxpooling
-        pooled_out = downsample.max_pool_2d(input=self.input,
+        self.output = downsample.max_pool_2d(input=self.input,
                                             ds=poolsize, ignore_border=True)
-
         # store parameters of this layer
         self.params = []
     
@@ -152,8 +197,7 @@ class LogisticRegression(object):
 
 
 class HiddenLayer(object):
-    def __init__(self, rng, input, n_in, n_out,
-                 activation=T.tanh):                     
+    def __init__(self, rng, input, n_in, n_out, activation=T.tanh):                     
         self.input = input
 
         W = hlv_init.init_standard(rng, (n_in, n_out))
