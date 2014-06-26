@@ -35,7 +35,7 @@ from theano.tensor.signal import downsample
 from theano.tensor.nnet import conv
 
 from logistic_sgd import LogisticRegression, load_data
-from mlp import HiddenLayer
+from hooloovoo_layers import HiddenLayer
 
 
 class LeNetConvPoolLayer(object):
@@ -252,7 +252,7 @@ start_time = time.clock()
 
 epoch = 0
 done_looping = False
-
+theano.config.floatX='float32'
 while (epoch < n_epochs) and (not done_looping):
     epoch = epoch + 1
     for minibatch_index in xrange(n_train_batches):

@@ -334,18 +334,18 @@ class CNN_faces_model():
             
         self.convLayer1 = hlv_layers.ConvLayer( rng = rng, 
                                                 input = x.reshape((-1, 1, 64, 64)), 
-                                                filter_shape = (n_hidden[0], 1, 5, 5), 
+                                                filter_shape = (n_hidden[0], 1, 13, 13), 
                                                 image_shape = (batch_size, 1, 64, 64), 
                                                 activation=activation,
-                                                poolsize=(3, 3))
+                                                poolsize=(4, 4))
         self.poolingLayer1 = hlv_layers.PoolingLayer(rng = rng, 
                                                      input = self.convLayer1.output,
                                                      input_shape=(0),
-                                                     poolsize=(3, 3))
+                                                     poolsize=(4, 4))
         self.convLayer2 = hlv_layers.ConvLayer( rng = rng, 
-                                                input = self.poolingLayer1.output.reshape((-1, n_hidden[0], 20, 20)), 
-                                                filter_shape = (n_hidden[1], n_hidden[0], 5, 5), 
-                                                image_shape = (batch_size, n_hidden[0], 20, 20), 
+                                                input = self.poolingLayer1.output.reshape((-1, n_hidden[0], 13, 13)), 
+                                                filter_shape = (n_hidden[1], n_hidden[0], 4, 4), 
+                                                image_shape = (batch_size, n_hidden[0], 13, 13), 
                                                 activation=activation,
                                                 poolsize=(2, 2))
         self.poolingLayer2 = hlv_layers.PoolingLayer(rng = rng, 
@@ -354,13 +354,10 @@ class CNN_faces_model():
                                                      poolsize=(2, 2))
         self.hiddenLayer = hlv_layers.HiddenLayer(   rng=rng,
                                                     input = self.poolingLayer2.output.flatten(2), 
-                                                    n_in = n_hidden[1] * 8 * 8,
+                                                    n_in = n_hidden[1] * 5 * 5,
                                                     n_out = 500, 
                                                     activation=activation)
-#        self.logRegressionLayer = hlv_layers.LogisticRegression(
-#                                    input=self.hiddenLayer.output,
-#                                    n_in=500,
-#                                    n_out=n_out)
+
         self.logRegressionLayer = hlv_layers.LogisticRegression(
                                     input=self.hiddenLayer.output,
                                     n_in=500,
@@ -437,10 +434,42 @@ class CNN_faces_model():
                                      in xrange(self.n_test_batches)]
         return np.mean(test_losses)    
 
+
+class GNN():
+    def __init__():
+        print "There are several issues here."
+        print " First, the GenericNN should receive as input ONE parameter, "
+        print "     which is the config structure that holds EVERYTHING."
+        print " Secondly, this means that the individual layers get config"
+        print "     structures. So they must also handle this."
+        print " Thirdly, the model should have different handles for (training,"
+        print "     testing, validating) batch, whole, individual, arbitray."
+        print "     It would be best to just compile these as needed, on the"
+        print "     fly, in a memoization-type of way. Also, they would be defined"
+        print "     So we need a generic function that ads these methods to the "
+        print "     individual models."
+        print " Fourthly, we want to make the system as simple and elegant to use"
+        print "     as possible, which is a goal at ods with our flexibility wishes."
+        print " Fifthly, we want to have generic methods of the layers which tell "
+        print "     us stuff about them, like param size, output shape etc."
+        print " Sixthly, I should add different datasets like mnist, faces. Also"
+        print "     some preprocessing is in order, like contrast normalization,"
+        print "     rescaling, whitening."
+        print " Seventhly, data augmentation should be included: noise, jitter, "
+        print "     warp, distort, mirror, etc."
+        print " Eightly, it should be possible to configure experiments to run."
+        print "     And also record ALL the possible data."
+        print " Ninthly, there should be better learning algorithms."
+        print " Tenthly, and finally, all these changes should be accompanied by"
+        print "     a new object/file structure, which warrants a rewrite to a"
+        print "     *voo* module.
+        
+        pass
+
 reload(hlv_layers)
 reload(hlv_models)
 reload(hlv_train)
-lr = 0.1
+lr = 0.0001
 lr_exp = 0.5
 batch_size = 500
 hid = [20, 50]
