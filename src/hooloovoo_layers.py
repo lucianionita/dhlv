@@ -15,6 +15,8 @@ from theano.tensor.nnet import conv
 import hooloovoo_init as hlv_init
 
 
+
+
 class ConvLayer(object):
     def __init__(self, rng, input, filter_shape, image_shape, activation=T.tanh, poolsize=(2,2)):
         assert image_shape[1] == filter_shape[1]
@@ -44,6 +46,14 @@ class ConvLayer(object):
 
         # store parameters of this layer
         self.params = [self.W, self.b]
+
+
+
+class InputLayer(object):
+    def __init__(self, rng, input):
+        self.input = input
+        self.output = input
+        self.params = []  
 
 class ConvPoolLayer(object):
     def __init__(self, rng, input, filter_shape, image_shape, activation=T.tanh, poolsize=(2,2)):

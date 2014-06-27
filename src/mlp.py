@@ -362,8 +362,8 @@ L1_reg=0.00
 L2_reg=0.0001
 n_epochs=1000
 dataset='mnist.pkl.gz'
-batch_size=20
-n_hidden=20
+batch_size=200
+n_hidden=500
 for arg in sys.argv[1:]:
 	if arg[0]=='-':
 		exec(arg[1:])

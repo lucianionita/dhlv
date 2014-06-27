@@ -54,17 +54,17 @@ def showBunch(X, r=1, size=64):
 
 
 
-
+"""
 if 'data_faces' in dir(): 
     print "... Data seems to be already loaded"
 else:
     data_faces = faces_data()
-    """
+"""    
 if 'data_digits' in dir(): 
     print "... Data seems to be already loaded"
 else:
     data_digits = mnist_data()
-"""
+
 
 """
 lr = 0.05
@@ -216,7 +216,7 @@ class CNN_C5S2C5S2H500L_model():
 
 
         self.negative_log_likelihood = self.logRegressionLayer.negative_log_likelihood
-        self.errors = self.logRegressionLayer.errors
+        self.errors() = self.logRegressionLayer.errors
 
         # define the cost
         self.cost = self.negative_log_likelihood(y)
@@ -462,14 +462,14 @@ class GNN():
         print " Ninthly, there should be better learning algorithms."
         print " Tenthly, and finally, all these changes should be accompanied by"
         print "     a new object/file structure, which warrants a rewrite to a"
-        print "     *voo* module.
+        print "     *voo* module."
         
         pass
 
 reload(hlv_layers)
 reload(hlv_models)
 reload(hlv_train)
-lr = 0.0001
+lr = 0.1
 lr_exp = 0.5
 batch_size = 500
 hid = [20, 50]
@@ -486,11 +486,11 @@ while lr > 0.00001:
 
 """
 
-M = CNN_faces_model(64*64, 10, data_faces, hid, batch_size, None, lr)
+M =  CNN_C5S2C5S2H500L_model(28*28, 10, data_digits, hid, batch_size, None, lr)
 param_values = hlv_aux.get_params(M)
 while lr > 0.00001:
     print "============ LR %f" % (lr)
-    M = CNN_faces_model(64*64, 10, data_faces, hid, batch_size, None, lr)
+    M =  CNN_C5S2C5S2H500L_model(28*28, 10, data_digits, hid, batch_size, None, lr)
     #M = hlv_models.MLP_model(64*64, 2, data_faces, batch_size, None, n_hidden, lr)
     hlv_aux.set_params(M, param_values)
     param_values = hlv_train.train_minibatches(M, min_epochs=20, max_epochs=200)
