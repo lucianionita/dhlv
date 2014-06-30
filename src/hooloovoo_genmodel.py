@@ -84,7 +84,8 @@ class Generic_model():
             'hidden': voo.layers.FullyConnectedLayer,
             'hidden_decomp': voo.layers.decomp.FullyConnectedDecompLayer,
             'logistic': voo.layers.LogisticRegressionLayer,
-            'pooling': voo.layers.PoolingLayer
+            'pooling': voo.layers.PoolingLayer,
+            'dropout': voo.layers.DropOutLayer
             }
         
         Layers = []
@@ -252,6 +253,7 @@ specs = [( 'conv'  ,    {'n_filters':2,     'filter':(5,5)}),
          ( 'pooling',   {'poolsize': (4,4)}),
          ( 'conv'  ,    {'n_filters':3,     'filter':(5,5)}), 
          ( 'hidden'  ,  {'n_out':5}), 
+         ( 'dropout',   {'prob':0.5}), 
          ( 'logistic',  {'n_out':10})
 ]
 M = Generic_model(n_in = (28,28), n_out = 10, data= data_digits, layerSpecs = specs, 

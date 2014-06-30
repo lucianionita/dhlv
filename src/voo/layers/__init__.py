@@ -10,6 +10,7 @@ import decomp
 class Layer(object):
     def __init__(self):
         pass
+        self.options = []
     def output_shape(self):
         raise NotImplementedError
     def output(self):
@@ -93,6 +94,28 @@ class PoolingLayer(Layer):
                                             ds=poolsize, ignore_border=True)
         # store parameters of this layer
         self.params = []
+
+class DropOutLayer(Layer):
+    def __init__(self, input, input_shape, batch_size, rng, prob=0.5):
+        # initialize layer parent
+        Layer.__init__(self)
+        
+        # set input
+        self.input = input
+        self.input_shape = input_shape
+        self.output_shape = input_shape
+        self.rng = rng
+        self.prob = prob
+
+        self.mask = init.init_zero(self.output_shape)
+        self.reset_mask()
+            
+        self.output = self.input * self.mask
+        self.params = []
+    def randomize_mask(self):
+        self.mask.set_value ( self.rng.binomial(n=1, p=1-self.prob, size=self.output_shape) )
+    def reset_mask(self):
+        self.mask.set_value ( np.ones(self.output_shape, dtype=theano.config.floatX) )
 
 class FullyConnectedLayer(Layer):
     def __init__(self,  input, input_shape, batch_size, rng, n_out, activation=T.tanh):
@@ -181,7 +204,7 @@ def GenLayer(layerClass, last_layer, batch_size, rng, config):
         
     new_layer = layerClass(    input = input, 
                                input_shape = input_shape,
-                               batch_size = batsch_size,
+                               batch_size = batch_size,
                                rng = rng, 
                                **config
                                )
