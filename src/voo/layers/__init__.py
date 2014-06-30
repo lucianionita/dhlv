@@ -99,6 +99,7 @@ class DropOutLayer(Layer):
     def __init__(self, input, input_shape, batch_size, rng, prob=0.5):
         # initialize layer parent
         Layer.__init__(self)
+        self.options.append('randomize-reset')        
         
         # set input
         self.input = input
@@ -112,9 +113,9 @@ class DropOutLayer(Layer):
             
         self.output = self.input * self.mask
         self.params = []
-    def randomize_mask(self):
+    def randomize(self):
         self.mask.set_value ( self.rng.binomial(n=1, p=1-self.prob, size=self.output_shape) )
-    def reset_mask(self):
+    def reset(self):
         self.mask.set_value ( np.ones(self.output_shape, dtype=theano.config.floatX) )
 
 class FullyConnectedLayer(Layer):
