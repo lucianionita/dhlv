@@ -259,12 +259,9 @@ while (epoch < n_epochs) and (not done_looping):
 
         iter = (epoch - 1) * n_train_batches + minibatch_index
 
-        if iter % 100 == 0:
-            print 'training @ iter = ', iter
-        
         t = time.time()
         cost_ij = train_model(minibatch_index)
-        print "Training time: %0.2f s" % (time.time()-t )
+        print "Training minibatch %i/%i time: %0.2f s \r" % (minibatch_index, n_train_batches ,time.time()-t )
         if (iter + 1) % validation_frequency == 0:
 
             # compute zero-one loss on validation set

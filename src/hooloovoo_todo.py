@@ -49,10 +49,15 @@ Todo list:
     Move everything into voo
     Move training into voo
     Move misc functions into voo
-    Move todo into voo
-    Add verbose option for model generation and training    
+    Move todo into voo too
+    Add verbose option for model generation and training
     Data recording from training
-    
+  e Boosting inputs
+  e Reweighing inputs to simulate different distributions
+  e Training with random output, to see if this unsupervised method learns 
+                         any good filters or at least is a good pretrainer
+    Add the fancy tanh activation
+    Weight shrinking ( W := W / (sum(W)) )
     .
     .
     .

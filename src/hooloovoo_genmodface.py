@@ -10,7 +10,7 @@ import gzip
 import numpy as np
 import theano
 
-#theano.config.floatX  ='float64'
+theano.config.floatX  ='float64'
 
 import theano.tensor as T
 import time
@@ -31,7 +31,7 @@ import voo
 rectifier = lambda x: T.maximum(0, x)
 
 
-"""
+
 if 'data_faces' in dir(): 
     print "... Data seems to be already loaded"
 else:
@@ -41,10 +41,7 @@ if 'data_digits' in dir():
     print "... Data seems to be already loaded"
 else:
     data_digits = mnist_data()
-
-# NOTE, the internal input shape is without regard to BATCHES
-# input shape must be a tuple
-# output shape is also a tuple
+"""
 import warnings
 
 
@@ -255,52 +252,55 @@ def Train_minibatches(self,     min_epochs = 100,
 reload(hlv_layers)
 reload(hlv_models)
 reload(hlv_train)
-lr = 0.1
-lr_exp = 0.1
+lr = 0.5
+lr_exp = 0.5
+L2_reg = 0.0005
+batch_size = 50
 
-batch_size = 500
-
-specs = [( 'conv'  ,    {	'n_filters':32,     
-				'filter':(5,5),
+"""
+         ( 'pooling',   {	'poolsize':(3,3)	
+			}),
+         ( 'conv'  ,    {	'n_filters':32,     
+				'filter':(4,4)
 			}), 
          ( 'pooling',   {	'poolsize':(2,2)	
 			}),
          ( 'conv'  ,    {	'n_filters':64,     
-				'filter':(3,3)
-			}), 
-         ( 'pooling',   {	'poolsize':(2,2)	
-			}),
-         ( 'conv'  ,    {	'n_filters':128,     
 				'filter':(2,2)
 			}), 
          ( 'pooling',   {	'poolsize':(2,2)
 			}),
          ( 'hidden'  ,  {	'n_out':100
 			}), 
+"""
 #         ( 'dropout',   {	'prob':0.5
 #			}), 
-         ( 'logistic',  {	'n_out':10
+specs = [
+	 (  'conv'   ,  {	'n_filters':32,
+				'filter':(13,13),
+			}), 
+         ( 'pooling',   {	'poolsize':(4,4)	
+			}),
+         ( 'hidden'  ,  {	'n_out':500
+			}), 
+         ( 'hidden'  ,  {	'n_out':50
+			}), 
+         ( 'logistic',  {	'n_out':2
 			})
 ]
-M = Generic_model(n_in = (28,28), n_out = 10, data= data_digits, layerSpecs = specs, 
-                   batch_size=batch_size, rng=None, learning_rate=lr, activation=rectifier, 
-                   L1_reg=0., L2_reg=0.0001)
+M = Generic_model(n_in = (64,64), n_out = 2, data= data_faces, layerSpecs = specs, 
+                   batch_size=batch_size, rng=None, learning_rate=lr, activation=T.tanh, 
+                   L1_reg=0., L2_reg=L2_reg)
 
-#M.minibatch.validate(0)
-#print "Model Magnitude:", hlv_aux.Magnitude(M)
-#Train_minibatches(M, min_epochs=5, max_epochs=10)
+print "Model Magnitude:", np.log(np.sum([np.prod(p.eval().shape) for p in M.params]))/np.log(2)
 
 param_values = hlv_aux.get_params(M)
-#param_values = hlv_train.train_minibatches(M, min_epochs=20, max_epochs=200)
 
-while lr > 0.0001:
+while lr > 0.0005:
     print "============ LR %f" % (lr)
-    M = Generic_model(n_in = (28,28), n_out = 10, data= data_digits, layerSpecs = specs, 
-                   batch_size=batch_size, rng=None, learning_rate=lr, activation=rectifier, 
-                   L1_reg=0., L2_reg=0.0001)
-    #M = hlv_models.MLP_model(64*64, 2, data_faces, batch_size, None, n_hidden, lr)
-    hlv_aux.set_params(M, param_values)
+    M.lr.set_value(lr)
+    #hlv_aux.set_params(M, param_values)
     #param_values = hlv_train.train_minibatches(M, min_epochs=20, max_epochs=200)
-    param_values = Train_minibatches(M, min_epochs=10, max_epochs=100)
+    param_values = Train_minibatches(M, min_epochs=50, max_epochs=1000, validation_frequency=39)
     lr = lr * lr_exp
 

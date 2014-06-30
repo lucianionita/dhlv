@@ -109,7 +109,7 @@ class DropOutLayer(Layer):
         self.prob = prob
 
         self.mask = init.init_zero(self.output_shape)
-        self.reset_mask()
+        self.reset()
             
         self.output = self.input * self.mask
         self.params = []
