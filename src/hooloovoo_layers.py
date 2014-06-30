@@ -1,7 +1,7 @@
 import os
 import cPickle as pickle
 import cPickle
-import cv2
+#import cv2
 import quick as q
 import theano
 import sys

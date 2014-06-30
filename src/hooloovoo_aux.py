@@ -1,7 +1,6 @@
 import os
 import cPickle as pickle
 import cPickle
-import cv2
 import quick as q
 import numpy as np
 import time
@@ -19,7 +18,7 @@ from theano.tensor.nnet import conv
 def mnist_data(dataset='mnist.pkl.gz'):
     t0 = time.time()
     print "Loading digits data ..."
-    dataset = "/home/tc/dhlv/data/"+dataset
+    dataset = "/home/ubuntu/dhlv/data/"+dataset
     f = gzip.open(dataset, 'rb')
     train_set, valid_set, test_set = cPickle.load(f)
     f.close()
@@ -30,7 +29,7 @@ def mnist_data(dataset='mnist.pkl.gz'):
                     dtype=theano.config.floatX), borrow=borrow)
         shared_y = theano.shared(np.asarray(data_y,
                     dtype=theano.config.floatX), borrow=borrow)
-        return shared_x, T.cast(shared_y, 'int32')
+        return shared_x, T.cast(shared_y, theano.config.floatX)
 
     test_set_x, test_set_y = shared_dataset(test_set)
     valid_set_x, valid_set_y = shared_dataset(valid_set)
@@ -57,15 +56,15 @@ def mnist_data(dataset='mnist.pkl.gz'):
 def faces_data(resize_factor = None):
     print "Loading faces data ..."
     t0 = time.time()
-    faces, labels = q.load_from_pkl("/home/tc/dhlv/data/faces.bzpkl")
+    faces, labels = q.load_from_pkl("/home/ubuntu/dhlv/data/faces.bzpkl")
     if resize_factor is not None:
         new_size = (int(64*resize_factor), int(64*resize_factor))
         print new_size
         for i in range(len(faces)):
             print i
-            t = cv2.resize(faces[i].reshape(64,64),new_size).ravel()
-    labels = np.asarray(labels, dtype=np.float64)
-    faces = np.asarray(faces, dtype=np.float64)
+            #t = cv2.resize(faces[i].reshape(64,64),new_size).ravel()
+    labels = np.asarray(labels, dtype=np.int32)
+    faces = np.asarray(faces, dtype=np.float32)
     
     
     data = q.newObject()

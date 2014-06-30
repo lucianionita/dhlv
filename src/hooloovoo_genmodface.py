@@ -1,7 +1,7 @@
 import os
 import cPickle as pickle
 import cPickle
-import cv2
+#import cv2
 import quick as q
 import theano
 import sys
@@ -10,7 +10,7 @@ import gzip
 import numpy as np
 import theano
 
-theano.config.floatX  ='float64'
+#theano.config.floatX  ='float64'
 
 import theano.tensor as T
 import time
@@ -60,7 +60,7 @@ class Generic_model():
         y = T.ivector('y')  
         X = T.matrix('X')  
         Y = T.ivector('Y')       
-        self.lr = theano.shared(learning_rate)
+        self.lr = theano.shared(name='LR', value=np.float32(learning_rate), strict = False)
         
         if (rng is None):
             rng = np.random.RandomState(23455)  
@@ -221,7 +221,7 @@ def Train_minibatches(self,     min_epochs = 100,
             batch_avg_cost = self.minibatch.train(batch_idx)
             iteration = epoch * self.n_train_batches + batch_idx
             t1 = time.time()
-            sys.stdout.write("Training batch %i/%i, Time(elapsed/estimated) %.0fs/%.0fs\r" %(batch_idx+1, self.n_train_batches, t1-t0, (t1-t0)/(batch_idx+1)*self.n_train_batches))
+            sys.stdout.write("Training batch %i/%i, Time(elapsed/estimated) %.0fs/%.0fs                          \r" %(batch_idx+1, self.n_train_batches, t1-t0, (t1-t0)/(batch_idx+1)*self.n_train_batches))
             sys.stdout.flush()
             # validation if right time
             if (iteration + 1) % validation_frequency == 0:
@@ -252,9 +252,9 @@ def Train_minibatches(self,     min_epochs = 100,
 reload(hlv_layers)
 reload(hlv_models)
 reload(hlv_train)
-lr = 0.5
+lr = 0.05
 lr_exp = 0.5
-L2_reg = 0.0005
+L2_reg = 0.00
 batch_size = 50
 
 """
@@ -276,14 +276,24 @@ batch_size = 50
 #         ( 'dropout',   {	'prob':0.5
 #			}), 
 specs = [
-	 (  'conv'   ,  {	'n_filters':32,
-				'filter':(13,13),
+	 (  'conv'   ,  {	'n_filters':	64,
+				'filter':	(5,5),
 			}), 
-         ( 'pooling',   {	'poolsize':(4,4)	
+         ( 'pooling',   {	'poolsize':	(2,2)
+			}),
+	 (  'conv'   ,  {	'n_filters':	128,
+				'filter':	(4,4),
+			}), 
+         ( 'pooling',   {	'poolsize':	(2,2)
+			}),
+	 (  'conv'   ,  {	'n_filters':	256,
+				'filter':	(3,3),
+			}), 
+         ( 'pooling',   {	'poolsize':	(2,2)
 			}),
          ( 'hidden'  ,  {	'n_out':500
 			}), 
-         ( 'hidden'  ,  {	'n_out':50
+         ( 'hidden'  ,  {	'n_out':100
 			}), 
          ( 'logistic',  {	'n_out':2
 			})
@@ -296,9 +306,9 @@ print "Model Magnitude:", np.log(np.sum([np.prod(p.eval().shape) for p in M.para
 
 param_values = hlv_aux.get_params(M)
 
-while lr > 0.0005:
+while lr > 0.00005:
     print "============ LR %f" % (lr)
-    M.lr.set_value(lr)
+    M.lr.set_value(np.float32(lr))
     #hlv_aux.set_params(M, param_values)
     #param_values = hlv_train.train_minibatches(M, min_epochs=20, max_epochs=200)
     param_values = Train_minibatches(M, min_epochs=50, max_epochs=1000, validation_frequency=39)
