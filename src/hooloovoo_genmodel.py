@@ -9,6 +9,9 @@ import time
 import gzip
 import numpy as np
 import theano
+
+theano.config.floatX  ='float64'
+
 import theano.tensor as T
 import time
 from theano.tensor.signal import downsample
@@ -24,8 +27,6 @@ import hooloovoo_models as hlv_models
 
 
 import voo
-
-
 
 rectifier = lambda x: T.maximum(0, x)
 
@@ -48,7 +49,7 @@ import warnings
 
 
         
-        
+
 
 class Generic_model():
     def __init__(self, n_in, n_out, data, layerSpecs, batch_size, rng, learning_rate, activation=T.tanh, L1_reg=0., L2_reg=0.0001):
@@ -79,14 +80,16 @@ class Generic_model():
         #######################################################################
         
         layerClasses = {
+            'conv': voo.layers.ConvLayer,
             'hidden': voo.layers.FullyConnectedLayer,
             'hidden_decomp': voo.layers.decomp.FullyConnectedDecompLayer,
-            'logistic': voo.layers.LogisticRegressionLayer
+            'logistic': voo.layers.LogisticRegressionLayer,
+            'pooling': voo.layers.PoolingLayer
             }
         
         Layers = []
 
-        input_layer = voo.layers.InputLayer(x, (np.prod(n_in),), batch_size)
+        input_layer = voo.layers.InputLayer(x, n_in, batch_size)
         Layers.append(input_layer)
         prev_layer = input_layer
         for layer_idx in range(len(layerSpecs)):
@@ -138,13 +141,13 @@ class Generic_model():
                                             givens={
                                                 x: X,
                                                 y: Y})
-        self.test_model = theano.function(  inputs=[],
+        self.test_model2 = theano.function(  inputs=[],
                                             outputs=self.errors(y),
                                             givens={
                                                 x: self.data.test.x,
                                                 y: self.data.test.y})
                                                 
-        self.validate_model = theano.function(inputs=[],
+        self.validate_model2 = theano.function(inputs=[],
                                             outputs=self.errors(y),
                                             givens={
                                                 x: self.data.valid.x,
@@ -169,11 +172,11 @@ class Generic_model():
                                                 x: self.data.train.x[index * self.batch_size:(index + 1) * self.batch_size],
                                                 y: self.data.train.y[index * self.batch_size:(index + 1) * self.batch_size]})                  
     def validate_model(self):
-        validation_losses = [self.self.minibatch.validate(i) for i
+        validation_losses = [self.minibatch.validate(i) for i
                                      in xrange(self.n_valid_batches)]
         return np.mean(validation_losses)
     def test_model(self):
-        test_losses = [self.self.minibatch.test(i) for i
+        test_losses = [self.minibatch.test(i) for i
                                      in xrange(self.n_test_batches)]
         return np.mean(test_losses) 
     def errors(self, y):
@@ -245,15 +248,19 @@ lr_exp = 0.5
 batch_size = 200
 hid = [20, 50]
 
-specs = [( 'hidden_decomp'  , {'n_out':500, 'dim':50}), 
-
-         ( 'logistic', {'n_out':10})
+specs = [( 'conv'  ,    {'n_filters':2,     'filter':(5,5)}), 
+         ( 'pooling',   {'poolsize': (4,4)}),
+         ( 'conv'  ,    {'n_filters':3,     'filter':(5,5)}), 
+         ( 'hidden'  ,  {'n_out':5}), 
+         ( 'logistic',  {'n_out':10})
 ]
 M = Generic_model(n_in = (28,28), n_out = 10, data= data_digits, layerSpecs = specs, 
-                   batch_size=200, rng=None, learning_rate=lr, activation=rectifier, 
+                   batch_size=10, rng=None, learning_rate=lr, activation=rectifier, 
                    L1_reg=0., L2_reg=0.0001)
+
+#M.minibatch.validate(0)
 #print "Model Magnitude:", hlv_aux.Magnitude(M)
-Train_minibatches(M, min_epochs=20, max_epochs=200)
+Train_minibatches(M, min_epochs=5, max_epochs=10)
 """
 param_values = hlv_aux.get_params(M)
 param_values = hlv_train.train_minibatches(M, min_epochs=20, max_epochs=200)

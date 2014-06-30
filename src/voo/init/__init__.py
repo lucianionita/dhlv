@@ -19,6 +19,7 @@ def init_conv(rng, shape, poolsize):
             dtype=theano.config.floatX),  borrow=True)
         return X
 
+
 def init_zero(shape):
         values = np.zeros(shape, dtype=theano.config.floatX)
         X = theano.shared(value=values, borrow=True)
