@@ -10,8 +10,6 @@ import gzip
 import numpy as np
 import theano
 
-#theano.config.floatX  ='float64'
-
 import theano.tensor as T
 import time
 from theano.tensor.signal import downsample
@@ -25,12 +23,13 @@ import hooloovoo_tests
 import hooloovoo_train as hlv_train
 import hooloovoo_models as hlv_models
 
+print "DEPRECATED HOOLOOVOO REFERENCES IN voo1.py "
 
 import voo
 
 rectifier = lambda x: T.maximum(0, x)
 
-
+theano.config.openmp = True
 
 if 'data_faces' in dir(): 
     print "... Data seems to be already loaded"
@@ -51,14 +50,6 @@ import warnings
 
 
 
-
-reload(hlv_layers)
-reload(hlv_models)
-reload(hlv_train)
-lr = 0.01
-lr_exp = 0.5
-L2_reg = 0.0
-batch_size = 50
 
 """
          ( 'conv'  ,    {	'n_filters':16,     
@@ -130,17 +121,17 @@ specs = [
 			})
 ]
 specs =  [
-         ( 'conv'  ,    {	'n_filters':12,
+         ( 'conv'  ,    {	'n_filters':4,
 				'filter':(7,7)
 			}), 
          ( 'pooling',   {	'poolsize':(2,2)	
 			}),
-         ( 'conv'  ,    {	'n_filters':24,  
+         ( 'conv'  ,    {	'n_filters':4,  
 				'filter':(5,5)
 			}), 
          ( 'pooling',   {	'poolsize':(2,2)	
 			}),
-         ( 'conv'  ,    {	'n_filters':48,
+         ( 'conv'  ,    {	'n_filters':4,
 				'filter':(3,3)
 			}), 
          ( 'pooling',   {	'poolsize':(2,2)
@@ -150,14 +141,33 @@ specs =  [
          ( 'logistic',  {	'n_out':2
 			})
 ]
-M = Generic_model(n_in = (64,64), n_out = 2, data= data_faces, layerSpecs = specs, 
+specs =  [
+         ( 'hidden'  ,  {	'n_out':50
+			}),
+         ( 'logistic',  {	'n_out':2
+			})
+]
+
+
+reload(hlv_layers)
+reload(hlv_models)
+reload(hlv_train)
+lr = 0.01
+lr_exp = 0.5
+L2_reg = 0.0
+batch_size = 300
+M = voo.models.Generic_model(n_in = (64,64), n_out = 2, data= data_faces, layerSpecs = specs, 
                    batch_size=batch_size, rng=None, learning_rate=lr, activation=T.tanh, 
                    L1_reg=0., L2_reg=L2_reg)
 
 print "Model Magnitude:", np.log(np.sum([np.prod(p.eval().shape) for p in M.params]))/np.log(2)
-
-M.lr.set_value(np.float32(lr))
-param_values = Train_minibatches(M, min_epochs=200, max_epochs=1500, validation_frequency=41)
+ 
+reload(voo)
+reload(voo.train)
+trainer = voo.train.SGDTrainer(M)
+trainer.train_minibatches()
+#M.lr.set_value(np.float32(lr))
+#param_values = Train_minibatches(M, min_epochs=200, max_epochs=1500, validation_frequency=41)
 """
 param_values = hlv_aux.get_params(M)
 

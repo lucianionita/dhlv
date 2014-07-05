@@ -18,7 +18,7 @@ from theano.tensor.nnet import conv
 def mnist_data(dataset='mnist.pkl.gz'):
     t0 = time.time()
     print "Loading digits data ..."
-    dataset = "/home/ubuntu/dhlv/data/"+dataset
+    dataset = "../data/"+dataset
     f = gzip.open(dataset, 'rb')
     train_set, valid_set, test_set = cPickle.load(f)
     f.close()
@@ -56,7 +56,7 @@ def mnist_data(dataset='mnist.pkl.gz'):
 def faces_data(resize_factor = None):
     print "Loading faces data ..."
     t0 = time.time()
-    faces, labels = q.load_from_pkl("/home/ubuntu/dhlv/data/faces.bzpkl")
+    faces, labels = q.load_from_pkl("../data/faces.bzpkl")
     if resize_factor is not None:
         new_size = (int(64*resize_factor), int(64*resize_factor))
         print new_size

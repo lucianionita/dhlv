@@ -3,8 +3,7 @@ import theano
 from theano.tensor.nnet import conv
 from theano.tensor.signal import downsample
 import numpy as np
-from .. import init 
-import decomp
+import init 
 
 
 class Layer(object):
@@ -147,7 +146,39 @@ class FullyConnectedLayer(Layer):
         
         # define params
         self.params = [self.W, self.b]
+        
+class FullyConnectedLayer_LowRank(Layer):
+    def __init__(self,  input, input_shape, batch_size, rng, n_out, activation=T.tanh, dim=10):
+        # initialize with Layer parent
+        Layer.__init__(self)
+        
+        # standard stuff
+        self.rng = rng
+        self.input = input
+        self.batch_size = batch_size
+        
+        # set shapes
+        self.input_shape = input_shape
+        self.output_shape = (n_out,)
+ 
+        # define the model parameters
+        n_in = np.prod(input_shape)
+        self.W_l = init.init_standard(rng, (n_in, dim))
+        self.W_r = init.init_standard(rng, (dim, n_out))
+        if activation == theano.tensor.nnet.sigmoid:
+            W_l.set_value(W_l.get_value()*4)
+            W_r.set_value(W_r.get_value()*4)
+        b = init.init_zero((n_out,))
+        self.W = T.dot(self.W_l, self.W_r)
+        self.b = b
 
+        #define output        
+        lin_output = T.dot(input, self.W) + self.b
+        self.output = activation(lin_output)
+        
+        # define params
+        self.params = [self.W_l, self.W_r, self.b]
+        
 class LogisticRegressionLayer(Layer):
     def __init__(self, input, input_shape, batch_size, rng, n_out, activation=T.tanh):
         # initialize with Layer parent
@@ -176,9 +207,8 @@ class LogisticRegressionLayer(Layer):
     def errors(self, y):
          return T.mean(T.neq(self.y_pred, y))
 
+
 verbose = True
-def vprint(x):
-    if (verbose): print x
 
 def GenLayer(layerClass, last_layer, batch_size, rng, config):
     input = last_layer.output
@@ -196,13 +226,6 @@ def GenLayer(layerClass, last_layer, batch_size, rng, config):
         
     
     
-    if verbose:
-        print "New Layer ---------------------------------------------------"
-        print "     Type:                   ", layerClass
-        print "     Last Layer:             ", last_layer
-        print "     Last layer output shape:", last_layer.output_shape
-        print "     Input Shape:            ", input_shape
-        
     new_layer = layerClass(    input = input, 
                                input_shape = input_shape,
                                batch_size = batch_size,
@@ -210,5 +233,10 @@ def GenLayer(layerClass, last_layer, batch_size, rng, config):
                                **config
                                )
     if verbose:
+        print "New Layer ---------------------------------------------------"
+        print "     Type:                   ", layerClass
+        print "     No. parameters          ", np.sum([np.prod(p.eval().shape) for p in new_layer.params])
+        print "     Prev. output shape:     ", last_layer.output_shape
+        print "     Input Shape:            ", input_shape
         print "     Output shape:           ", new_layer.output_shape
     return new_layer
