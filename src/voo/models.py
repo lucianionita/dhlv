@@ -124,9 +124,9 @@ class Generic_model():
     
     def randomize(self):
         for layer in self.Layers:
-            if 'reset-randomize' in layer.options:
+            if 'randomize-reset' in layer.options:
                 layer.randomize()
     def reset(self):
         for layer in self.Layers:
-            if 'reset-randomize' in layer.options:
+            if 'randomize-reset' in layer.options:
                 layer.reset()

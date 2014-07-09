@@ -136,7 +136,7 @@ class DropOutLayer(Layer):
         self.output = self.input * self.mask
         self.params = []
     def randomize(self):
-        self.mask.set_value ( self.rng.binomial(n=1, p=1-self.prob, size=self.output_shape) )
+        self.mask.set_value ( np.float32(self.rng.binomial(n=1, p=1-self.prob, size=self.output_shape)))
     def reset(self):
         self.mask.set_value ( np.ones(self.output_shape, dtype=theano.config.floatX) )
 
