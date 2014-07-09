@@ -4,8 +4,7 @@ from theano.tensor.nnet import conv
 from theano.tensor.signal import downsample
 import numpy as np
 import init 
-import hooloovoo_aux as hlv_aux
-print "DEPRECATED HOOLOOVOO REFERENCE IN TRAIN.PY : hlv_aux"
+from misc import *
 import quick as q
 theano.config.on_unused_input="warn"
 import time
@@ -17,7 +16,10 @@ class SGDTrainer:
                            max_epochs = 1000, 
                            patience_increase=2, 
                            improvement_threshold=0.995,
-                           validation_frequency=None):
+                           learning_rate = 0.1,
+                           validation_frequency=None,
+                           L1_reg=0., 
+                           L2_reg=0.0001):
         # remember the parameters
         self.model = model
         self.min_epochs = min_epochs
@@ -31,18 +33,23 @@ class SGDTrainer:
         # for ease of use
         self.n_train_batches = self.model.n_train_batches            
         
-        self.best_params = hlv_aux.get_params(self.model)
+        self.best_params = get_params(self.model)
+        self.lr = theano.shared(name='LR', value=np.float32(learning_rate), strict = False)
+        self.L1_reg = L1_reg
+        self.L2_reg = L2_reg
+        
         self.compile_model_ops()
+        
     
     def compile_model_ops(self):
         self.model_ops = q.newObject()
         # Define the model training and testing functions for both
         # minibatches and arbitrary data
-        index = T.lscalar()  # index to a [mini]batch
-        x = T.matrix('x')
-        y = T.ivector('y')  
-        X = T.matrix('X')          
-        Y = T.ivector('Y')     
+        index = self.model.index
+        x = self.model.x
+        y = self.model.y
+        X = self.model.X
+        Y = self.model.Y
         """
         self.model_ops.train_model = theano.function(inputs=[X, Y],
                                             outputs=self.model.errors(y),
@@ -61,9 +68,21 @@ class SGDTrainer:
                                             outputs=self.model.errors(y),
                                             givens={
                                                 x: self.model.data.valid.x,
-                                                y: self.model.data.valid.y}) 
+                                                y: self.model.data.valid.y})                                                 
                                                 """
-        """                                                
+        self.params = self.model.params
+        
+        self.acc_cost = self.model.acc_cost
+        self.L1 = np.sum([abs(param).sum() for param in self.params])
+        self.L2 = np.sum([(param**2).sum() for param in self.params])
+        self.reg_cost = self.L1_reg * self.L1 + self.L2_reg * self.L2
+        self.cost = self.acc_cost + self.reg_cost
+
+        self.grads = [T.grad(cost=self.cost, wrt=param) for param in self.params]    
+        
+        self.updates = [(param, param - self.lr * grad) for
+                    param, grad in zip(self.params, self.grads)]
+        
         self.model_ops.minibatch = q.newObject()        
         self.model_ops.minibatch.test = theano.function(  inputs=[index],
                                             outputs=self.model.errors(y),
@@ -77,31 +96,31 @@ class SGDTrainer:
                                                 x: self.model.data.valid.x[index * self.batch_size:(index + 1) * self.batch_size],
                                                 y: self.model.data.valid.y[index * self.batch_size:(index + 1) * self.batch_size]}) 
         self.model_ops.minibatch.train = theano.function(inputs=[index],
-                                            outputs=self.model.cost,
+                                            outputs=self.cost,
                                             updates=self.updates,
                                             givens={
                                                 x: self.model.data.train.x[index * self.batch_size:(index + 1) * self.batch_size],
                                                 y: self.model.data.train.y[index * self.batch_size:(index + 1) * self.batch_size]})            
-        """
+       
         
     def train_minibatch(self, batch_idx, randomize = False):
         if randomize:
             self.model.randomize()
-        return self.model.minibatch.train(batch_idx)
+        return self.model_ops.minibatch.train(batch_idx)
     
     def test_model(self):
         self.model.reset()
-        errors = [self.model.minibatch.test(batch_idx) for batch_idx in range(self.model.n_test_batches)]
+        errors = [self.model_ops.minibatch.test(batch_idx) for batch_idx in range(self.model.n_test_batches)]
         return np.mean(errors)        
 
     def validate_model(self):
         self.model.reset()
-        errors = [self.model.minibatch.validate(batch_idx) for batch_idx in range(self.model.n_test_batches)]
+        errors = [self.model_ops.minibatch.validate(batch_idx) for batch_idx in range(self.model.n_test_batches)]
         return np.mean(errors)        
         
     def train_minibatches(self):
         # initialization parameters
-        hlv_aux.set_params(self.model, self.best_params)
+        set_params(self.model, self.best_params)
         best_validation_loss = np.inf
         test_score = 0.
         start_time = time.time()
@@ -142,7 +161,7 @@ class SGDTrainer:
                         print(('     epoch %i, minibatch %i/%i, test error of best'
                             ' model %0.3f%%') % (epoch, batch_idx + 1, 
                             self.n_train_batches, test_score * 100.))
-                        self.best_params = hlv_aux.get_params(self.model)
+                        self.best_params = get_params(self.model)
             # check if done looping
             epoch = epoch + 1
             if epoch == self.max_epochs or patience <= iteration:

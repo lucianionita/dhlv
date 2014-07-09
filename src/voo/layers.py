@@ -94,6 +94,29 @@ class PoolingLayer(Layer):
         # store parameters of this layer
         self.params = []
 
+class NoiseLayer(Layer):
+    def __init__(self, input, input_shape, batch_size, rng, scale=0.1):
+        # initialize layer parent
+        Layer.__init__(self)
+        self.options.append('randomize-reset')        
+        
+        # set input
+        self.input = input
+        self.input_shape = input_shape
+        self.output_shape = input_shape
+        self.rng = rng
+        self.scale = scale
+
+        self.noise = init.init_zero(self.output_shape)
+        self.reset()
+            
+        self.output = self.input + self.noise
+        self.params = []
+    def randomize(self):
+        self.noise = np.random.normal(0, scale, self.output_shape)
+    def reset(self):
+        self.noise = init.init_zero(self.output_shape)
+
 class DropOutLayer(Layer):
     def __init__(self, input, input_shape, batch_size, rng, prob=0.5):
         # initialize layer parent

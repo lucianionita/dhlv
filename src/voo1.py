@@ -1,54 +1,28 @@
 import os
 import cPickle as pickle
-import cPickle
-#import cv2
 import quick as q
 import theano
 import sys
 import time
-import gzip
 import numpy as np
 import theano
-
 import theano.tensor as T
-import time
 from theano.tensor.signal import downsample
 from theano.tensor.nnet import conv
-
-from hooloovoo_aux import mnist_data, faces_data
-import hooloovoo_aux as hlv_aux
-import hooloovoo_init as hlv_init
-import hooloovoo_layers as hlv_layers
-import hooloovoo_tests
-import hooloovoo_train as hlv_train
-import hooloovoo_models as hlv_models
-
-print "DEPRECATED HOOLOOVOO REFERENCES IN voo1.py "
-
 import voo
 
-rectifier = lambda x: T.maximum(0, x)
-
-theano.config.openmp = True
-
+"""
 if 'data_faces' in dir(): 
     print "... Data seems to be already loaded"
 else:
-    data_faces = faces_data()
+    data = voo.datasets.get_faces()
 """    
 if 'data_digits' in dir(): 
     print "... Data seems to be already loaded"
 else:
-    data_digits = mnist_data()
-"""
+    data = voo.datasets.get_mnist()
+
 import warnings
-
-
-        
-
-
-
-
 
 
 """
@@ -142,32 +116,29 @@ specs =  [
 			})
 ]
 specs =  [
-         ( 'hidden'  ,  {	'n_out':50
+          
+         ( 'hidden'  ,  {	'n_out':250
 			}),
-         ( 'logistic',  {	'n_out':2
+         ( 'dropout',   {	'prob':0.5
+			}), 
+         ( 'logistic',  {	'n_out':data.dim_out
 			})
 ]
 
 
-reload(hlv_layers)
-reload(hlv_models)
-reload(hlv_train)
 lr = 0.01
 lr_exp = 0.5
 L2_reg = 0.0
 batch_size = 300
-M = voo.models.Generic_model(n_in = (64,64), n_out = 2, data= data_faces, layerSpecs = specs, 
-                   batch_size=batch_size, rng=None, learning_rate=lr, activation=T.tanh, 
-                   L1_reg=0., L2_reg=L2_reg)
+M = voo.models.Generic_model(n_in = data.dim, n_out = data.dim_out, data= data, 
+                layerSpecs = specs, batch_size=batch_size, rng=None,    activation=voo.ReLU)
 
-print "Model Magnitude:", np.log(np.sum([np.prod(p.eval().shape) for p in M.params]))/np.log(2)
+print "Model Magnitude:", voo.Magnitude(M)
  
 reload(voo)
 reload(voo.train)
-trainer = voo.train.SGDTrainer(M)
+trainer = voo.train.SGDTrainer(M, learning_rate=lr, L1_reg=0., L2_reg=L2_reg)
 trainer.train_minibatches()
-#M.lr.set_value(np.float32(lr))
-#param_values = Train_minibatches(M, min_epochs=200, max_epochs=1500, validation_frequency=41)
 """
 param_values = hlv_aux.get_params(M)
 

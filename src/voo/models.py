@@ -8,7 +8,7 @@ import layers
 import quick as q
 
 class Generic_model():
-    def __init__(self, n_in, n_out, data, layerSpecs, batch_size, rng, learning_rate, activation=T.tanh, L1_reg=0., L2_reg=0.0001):
+    def __init__(self, n_in, n_out, data, layerSpecs, batch_size, rng, activation=T.tanh):
 
         # Define classifier independent stuff
         # preliminaries
@@ -19,7 +19,12 @@ class Generic_model():
         y = T.ivector('y')  
         X = T.matrix('X')  
         Y = T.ivector('Y')       
-        self.lr = theano.shared(name='LR', value=np.float32(learning_rate), strict = False)
+        
+        self.index = index
+        self.x = x
+        self.y = y
+        self.X = X
+        self.Y = Y
         
         if (rng is None):
             rng = np.random.RandomState(23455)  
@@ -73,13 +78,13 @@ class Generic_model():
         
 
         self.acc_cost = self.Layers[-1].negative_log_likelihood(y)
-        self.L1 = np.sum([abs(param).sum() for param in self.params])
-        self.L2 = np.sum([(param**2).sum() for param in self.params])
-        self.reg_cost = L1_reg * self.L1 + L2_reg * self.L2
-        self.cost = self.acc_cost + self.reg_cost
+        #self.L1 = np.sum([abs(param).sum() for param in self.params])
+        #self.L2 = np.sum([(param**2).sum() for param in self.params])
+        #self.reg_cost = L1_reg * self.L1 + L2_reg * self.L2
+        #self.cost = self.acc_cost + self.reg_cost
 
 
-
+        """
         self.grads = [T.grad(cost=self.cost, wrt=param) for param in self.params]    
         
         self.updates = [(param, param - self.lr * grad) for
@@ -104,6 +109,7 @@ class Generic_model():
                                                 y: self.data.train.y[index * self.batch_size:(index + 1) * self.batch_size]})            
 
         """           
+        """
         def validate_model(self):
             validation_losses = [self.minibatch.validate(i) for i
                                          in xrange(self.n_valid_batches)]

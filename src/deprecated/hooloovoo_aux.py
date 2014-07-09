@@ -28,8 +28,8 @@ def mnist_data(dataset='mnist.pkl.gz'):
         shared_x = theano.shared(np.asarray(data_x,
                     dtype=theano.config.floatX), borrow=borrow)
         shared_y = theano.shared(np.asarray(data_y,
-                    dtype=theano.config.floatX), borrow=borrow)
-        return shared_x, T.cast(shared_y, theano.config.floatX)
+                    dtype=np.int32), borrow=borrow)
+        return shared_x, shared_y
 
     test_set_x, test_set_y = shared_dataset(test_set)
     valid_set_x, valid_set_y = shared_dataset(valid_set)
@@ -46,6 +46,8 @@ def mnist_data(dataset='mnist.pkl.gz'):
     data_digits.train.y = train_set_y
     data_digits.valid.y = valid_set_y
     data_digits.test.y  = test_set_y
+    data_digits.dim = (28, 28)
+    data_digits.dim_out = 10
     t1 = time.time()
     print "Data loaded in %0.2f seconds" % ( t1-t0)
     return data_digits
@@ -102,8 +104,8 @@ def faces_data(resize_factor = None):
     data.valid.y = theano.shared(data.valid.y, borrow=True)
     data.test.x  = theano.shared(data.test.x , borrow=True)
     data.test.y  = theano.shared(data.test.y , borrow=True)
-    
-    
+    data.dim = (64, 64)
+    data_digits.dim_out = 2
     def show(img):
         q.show(img.reshape((64,64)))
         cv2.destroyAllWindows()
