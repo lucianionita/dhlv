@@ -73,63 +73,24 @@ specs = [
 ]
 specs = [
 	 (  'conv'   ,  {	'n_filters':	32,
-				'filter':	(9,9),
-			}), 
-         ( 'pooling',   {	'poolsize':	(2,2)
-			}),
-	 (  'conv'   ,  {	'n_filters':	64,
 				'filter':	(5,5),
 			}), 
-         ( 'pooling',   {	'poolsize':	(2,2)
+         ( 'dropout' ,  {       'prob':0.16
+                        }),
+         ( 'pooling',   {	'poolsize':	(5,5)
 			}),
-	 (  'conv'   ,  {	'n_filters':	128,
-				'filter':	(3,3),
+         ( 'hidden'  ,  {	'n_out':100
 			}), 
-         ( 'pooling',   {	'poolsize':	(2,2)
-			}),
-         ( 'hidden'  ,  {	'n_out':500
-			}), 
-         ( 'hidden'  ,  {	'n_out':50
-			}), 
-         ( 'logistic',  {	'n_out':2
-			})
-]
-specs =  [
-         ( 'conv'  ,    {	'n_filters':4,
-				'filter':(7,7)
-			}), 
-         ( 'pooling',   {	'poolsize':(2,2)	
-			}),
-         ( 'conv'  ,    {	'n_filters':4,  
-				'filter':(5,5)
-			}), 
-         ( 'pooling',   {	'poolsize':(2,2)	
-			}),
-         ( 'conv'  ,    {	'n_filters':4,
-				'filter':(3,3)
-			}), 
-         ( 'pooling',   {	'poolsize':(2,2)
-			}),
-         ( 'hidden'  ,  {	'n_out':10
-			}),
-         ( 'logistic',  {	'n_out':2
-			})
-]
-specs =  [
-          
-         ( 'hidden'  ,  {	'n_out':250
-			}),
-         ( 'dropout',   {	'prob':0.5
-			}), 
-         ( 'logistic',  {	'n_out':data.dim_out
+         ( 'dropout' ,  {       'prob':0.16
+                        }),
+         ( 'logistic',  {	'n_out':10
 			})
 ]
 
-
-lr = 0.01
+lr = 0.1
 lr_exp = 0.5
 L2_reg = 0.0
-batch_size = 300
+batch_size = 600
 M = voo.models.Generic_model(n_in = data.dim, n_out = data.dim_out, data= data, 
                 layerSpecs = specs, batch_size=batch_size, rng=None,    activation=voo.ReLU)
 
@@ -137,8 +98,12 @@ print "Model Magnitude:", voo.Magnitude(M)
  
 reload(voo)
 reload(voo.train)
-trainer = voo.train.SGDTrainer(M, learning_rate=lr, L1_reg=0., L2_reg=L2_reg)
+trainer = voo.train.SGDTrainer(M, learning_rate=lr, L1_reg=0., L2_reg=L2_reg, max_epochs=2000)
+#while lr > 0.01:
+#	print "Learning_rate:", lr
+#	trainer.lr.set_value(lr)
 trainer.train_minibatches()
+#	lr = lr* lr_exp
 """
 param_values = hlv_aux.get_params(M)
 

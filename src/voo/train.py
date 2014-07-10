@@ -137,10 +137,11 @@ class SGDTrainer:
     
         while (not done_looping):
             t0 = time.time()
-
-            for batch_idx  in xrange(self.n_train_batches):
+            random_batches = range(self.n_train_batches)
+            np.random.shuffle(random_batches)
+            for batch_idx  in range(self.n_train_batches):
                 # Train on one batch
-                batch_avg_cost = self.train_minibatch(batch_idx, randomize=True)
+                batch_avg_cost = self.train_minibatch(random_batches[batch_idx], randomize=True)
                 iteration = epoch * self.n_train_batches + batch_idx
                 t1 = time.time()
                 sys.stdout.write("Training batch %i/%i, Time(elapsed/estimated) %.0fs/%.0fs                          \r" %(batch_idx+1, self.n_train_batches, t1-t0, (t1-t0)/(batch_idx+1)*self.n_train_batches))
@@ -168,7 +169,7 @@ class SGDTrainer:
                 done_looping = True
         end_time = time.time()
         print "Optimization Complete!"
-        print "Best validation error %.3f%%." % (best_validation_loss * 100.)
+        print "Best Validation Error: %.3f%%." % (best_validation_loss * 100.)
         print "           Test Error: %.3f%%" % (test_score * 100.)
         print 'The training ran for %d epochs, with about %f epochs/sec' % ( epoch, 1. * epoch / (end_time - start_time))
         

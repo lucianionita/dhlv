@@ -39,6 +39,8 @@ def show():
 *   Move training into voo
 *   Move misc functions into voo
 *   Move todo into voo too
+*   Shuffle minibatch order when training
+
   D Binarization of layer activations, lateral inhibitions
   D Mean downsampling
   D Max downsampling
