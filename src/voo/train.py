@@ -13,7 +13,8 @@ import sys
 class SGDTrainer:
     def __init__(self,     model,
                            min_epochs = 100,
-                           max_epochs = 1000, 
+                           max_epochs = 1000,
+                           min_epochs_retain = 50,
                            patience_increase=2, 
                            improvement_threshold=0.995,
                            learning_rate = 0.1,
@@ -23,6 +24,7 @@ class SGDTrainer:
         # remember the parameters
         self.model = model
         self.min_epochs = min_epochs
+        self.min_epochs_retain = min_epochs_retain
         self.max_epochs = max_epochs
         self.patience_increase = patience_increase
         self.improvement_threshold = improvement_threshold
@@ -153,16 +155,20 @@ class SGDTrainer:
                     validation_loss = self.validate_model()
                     print('\nepoch %i, mb %i/%i, tcost %.5f, verror %.3f%%' % \
                         (epoch, batch_idx + 1, self.n_train_batches,
-                         batch_avg_cost, validation_loss * 100.))
+                         batch_avg_cost, validation_loss * 100.))                    
                     # Check if validation error is worth looking at
                     if validation_loss < best_validation_loss * self.improvement_threshold:                                                
                         patience = max(patience, iteration * self.patience_increase)
-                        best_validation_loss = validation_loss
-                        test_score = self.test_model()
+                        this_test_score = self.test_model()
                         print(('     epoch %i, minibatch %i/%i, test error of best'
                             ' model %0.3f%%') % (epoch, batch_idx + 1, 
-                            self.n_train_batches, test_score * 100.))
-                        self.best_params = get_params(self.model)
+                            self.n_train_batches, this_test_score * 100.))
+                        if epoch < self.min_epochs_retain:
+                            print "Not enough epochs passed to retain best model. %d needed" % self.min_epochs_retain
+                        else:
+                            test_score = this_test_score
+                            best_validation_loss = validation_loss
+                            self.best_params = get_params(self.model)
             # check if done looping
             epoch = epoch + 1
             if epoch == self.max_epochs or patience <= iteration:

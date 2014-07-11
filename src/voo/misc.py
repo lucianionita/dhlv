@@ -16,6 +16,6 @@ def set_params(model, param_values):
 def Magnitude(model):
     psize = [np.prod(param.eval().shape) for param in model.params]
     tsize = np.sum(psize)
-    return round(np.log(tsize) / np.log(2),)
+    return np.log(tsize) / np.log(2)
          
                     

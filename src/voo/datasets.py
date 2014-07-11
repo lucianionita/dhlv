@@ -104,7 +104,7 @@ def get_faces(resize_factor = None):
     data.test.x  = theano.shared(data.test.x , borrow=True)
     data.test.y  = theano.shared(data.test.y , borrow=True)
     data.dim = (64, 64)
-    data_digits.dim_out = 2
+    data.dim_out = 2
     def show(img):
         q.show(img.reshape((64,64)))
         cv2.destroyAllWindows()

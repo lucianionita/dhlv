@@ -1,3 +1,7 @@
+"""
+Achieves 0.11875 test error
+on iteration 3445 
+"""
 import os
 import cPickle as pickle
 import quick as q
@@ -26,32 +30,32 @@ else:
 
 
 specs = [
-         ( 'conv'  ,    {	'n_filters':32,
+         ( 'conv'  ,    {	'n_filters':16,
 				'filter':(7,7)
 			}), 
          ( 'pooling',   {	'poolsize':(3,3)	
 			}),
          ( 'dropout',   {       'prob':0.5
                         }),
-         ( 'conv'  ,    {	'n_filters':64,     
+         ( 'conv'  ,    {	'n_filters':32,     
 				'filter':(4,4)
 			}), 
          ( 'pooling',   {	'poolsize':(2,2)	
 			}),
          ( 'dropout',   {       'prob':0.5
                         }),
-         ( 'conv'  ,    {	'n_filters':128,
+         ( 'conv'  ,    {	'n_filters':64,
 				'filter':(2,2)
 			}), 
          ( 'pooling',   {	'poolsize':(2,2)
 			}),
          ( 'dropout',   {       'prob':0.5
                         }),
-         ( 'hidden',    {	'n_out':1000
+         ( 'hidden',    {	'n_out':500#,              'dim':10
 			}), 
          ( 'dropout',   {       'prob':0.5
                         }),
-         ( 'hidden',    {	'n_out':250
+         ( 'hidden',    {	'n_out':100#,              'dim':10
 			}), 
          ( 'dropout',   {       'prob':0.5
                         }),
@@ -70,7 +74,6 @@ print "Model Magnitude: %.3f" % voo.Magnitude(M)
 trainer = voo.train.SGDTrainer(M, learning_rate=lr, L1_reg=0., L2_reg=L2_reg, max_epochs=10000, min_epochs=250, min_epochs_retain=100)
 best_params = voo.get_params(M)
 while lr > 0.0001:
-        print "Learning Rate:", lr
 	voo.set_params(M, best_params)
 	trainer.train_minibatches()
 	best_params = voo.get_params(M)

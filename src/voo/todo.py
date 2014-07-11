@@ -40,7 +40,13 @@ def show():
 *   Move misc functions into voo
 *   Move todo into voo too
 *   Shuffle minibatch order when training
-
+    DropConnect  
+    Create a layer that ALWAYS have L2_norm = 1
+    Create a layer that has ALWAYS L1_norm = 1
+    Create a layer that has ALWAYS Linf_norm = 1
+    Add regularization for types of representations (like the msc paper)
+    
+    
   D Binarization of layer activations, lateral inhibitions
   D Mean downsampling
   D Max downsampling
@@ -64,6 +70,11 @@ def show():
   e Reweighing inputs to simulate different distributions
   e Training with random output, to see if this unsupervised method learns 
                          any good filters or at least is a good pretrainer
+  e Dropconnect, with biases to each weight
+  e When doing dropout, keep a measure of a neuron's importance. As importance
+    drops, increase neuron's dropout probability. When really high, reinitialize
+    the neuron's weights and dropout probability. This way, we eliminate the
+    useless features and add serious movement to the search process.
     
             
 Meanings:

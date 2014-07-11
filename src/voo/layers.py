@@ -239,7 +239,8 @@ def GenLayer(layerClass, last_layer, batch_size, rng, config):
     
     # If we're doing a hidden layer, the input must be reshuffled
     if (layerClass == FullyConnectedLayer or \
-                    layerClass==LogisticRegressionLayer) and \
+                    layerClass == FullyConnectedLayer_LowRank or \
+                    layerClass == LogisticRegressionLayer) and \
                     (len(input_shape)!=1):
         input = input.flatten(2)        
         input_shape = (np.prod(input_shape[0:]),)

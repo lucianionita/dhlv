@@ -9,6 +9,7 @@ import quick as q
 
 class Generic_model():
     def __init__(self, n_in, n_out, data, layerSpecs, batch_size, rng, activation=T.tanh):
+	print "Generating model with these specs:", layerSpecs
 
         # Define classifier independent stuff
         # preliminaries
