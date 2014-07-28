@@ -47,7 +47,8 @@ class Generic_model():
             'hidden_lr': layers.FullyConnectedLayer_LowRank,
             'logistic': layers.LogisticRegressionLayer,
             'pooling': layers.PoolingLayer,
-            'dropout': layers.DropOutLayer
+            'dropout': layers.DropOutLayer,
+            'noise': layers.NoiseLayer
             }
         
         Layers = []

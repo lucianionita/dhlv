@@ -20,6 +20,8 @@ class InputLayer(Layer):
         Layer.__init__(self)
         self.input = input
         self.input_shape = input_shape
+        if len(input_shape)==2:
+            self.input = input.reshape((batch_size, 1) + input_shape)
         self.output = self.input
         self.output_shape = self.input_shape
         self.params = []
@@ -111,11 +113,12 @@ class NoiseLayer(Layer):
         self.reset()
             
         self.output = self.input + self.noise
+        #self.output = self.noise
         self.params = []
     def randomize(self):
-        self.noise = np.random.normal(0, scale, self.output_shape)
+        self.noise.set_value(np.float32(np.random.normal(0, self.scale, self.output_shape)))
     def reset(self):
-        self.noise = init.init_zero(self.output_shape)
+        self.noise.set_value( np.zeros(self.output_shape, dtype=theano.config.floatX) )
 
 class DropOutLayer(Layer):
     def __init__(self, input, input_shape, batch_size, rng, prob=0.5):
@@ -134,6 +137,7 @@ class DropOutLayer(Layer):
         self.reset()
             
         self.output = self.input * self.mask
+        #self.output = self.mask
         self.params = []
     def randomize(self):
         self.mask.set_value ( np.float32(self.rng.binomial(n=1, p=1-self.prob, size=self.output_shape)))
@@ -240,10 +244,10 @@ def GenLayer(layerClass, last_layer, batch_size, rng, config):
     # If we're doing a hidden layer, the input must be reshuffled
     if (layerClass == FullyConnectedLayer or \
                     layerClass == FullyConnectedLayer_LowRank or \
-                    layerClass == LogisticRegressionLayer) and \
-                    (len(input_shape)!=1):
-        input = input.flatten(2)        
+                    layerClass == LogisticRegressionLayer): #and \
+                    #(len(input_shape)!=1):
         input_shape = (np.prod(input_shape[0:]),)
+        input = input.reshape((batch_size,)+input_shape)
     if (layerClass == ConvLayer):
         if len(input_shape)==2:
             input = input.reshape((batch_size, 1) + input_shape)
